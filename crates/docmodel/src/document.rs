@@ -215,6 +215,13 @@ pub struct OutputProfile {
     /// The name of the postamble file within the `src` directory.
     pub postamble_file: String,
 
+    /// Whether the PDF to TeX syncing should be activated in this profile.
+    ///
+    /// Enabling this option creates additional anchors in the output PDF,
+    /// allowing quick jumping between PDF out and TeX source files in
+    /// supported IDEs.
+    pub synctex: bool,
+
     /// Whether TeX's shell-escape feature should be activated in this profile.
     ///
     /// Note that besides creating portability and reproducibility issues,
@@ -303,6 +310,7 @@ pub(crate) fn default_outputs() -> HashMap<String, OutputProfile> {
             preamble_file: DEFAULT_PREAMBLE_FILE.to_owned(),
             index_file: DEFAULT_INDEX_FILE.to_owned(),
             postamble_file: DEFAULT_POSTAMBLE_FILE.to_owned(),
+            synctex: false,
             shell_escape: false,
             shell_escape_cwd: None,
         },
@@ -344,6 +352,7 @@ mod syntax {
         pub index_file: Option<String>,
         #[serde(rename = "postamble")]
         pub postamble_file: Option<String>,
+        pub synctex: Option<bool>,
         pub shell_escape: Option<bool>,
         pub shell_escape_cwd: Option<String>,
     }
@@ -374,6 +383,8 @@ mod syntax {
                 Some(rt.postamble_file.clone())
             };
 
+            let synctex = if !rt.synctex { None } else { Some(true) };
+
             let shell_escape = if !rt.shell_escape { None } else { Some(true) };
             let shell_escape_cwd = rt.shell_escape_cwd.clone();
 
@@ -384,12 +395,14 @@ mod syntax {
                 preamble_file,
                 index_file,
                 postamble_file,
+                synctex,
                 shell_escape,
                 shell_escape_cwd,
             }
         }
 
         pub fn to_runtime(&self) -> super::OutputProfile {
+            let synctex_default = false;
             let shell_escape_default = self.shell_escape_cwd.is_some();
 
             super::OutputProfile {
@@ -413,6 +426,7 @@ mod syntax {
                     .postamble_file
                     .clone()
                     .unwrap_or_else(|| DEFAULT_POSTAMBLE_FILE.to_owned()),
+                synctex: self.synctex.unwrap_or(synctex_default),
                 shell_escape: self.shell_escape.unwrap_or(shell_escape_default),
                 shell_escape_cwd: self.shell_escape_cwd.clone(),
             }
@@ -479,7 +493,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn shell_escape_default_false() {
+    fn check_default_false() {
         const TOML: &str = r#"
         [doc]
         name = "test"
@@ -492,6 +506,7 @@ mod tests {
 
         let mut c = Cursor::new(TOML.as_bytes());
         let doc = Document::new_from_toml(".", ".", &mut c).unwrap();
+        assert!(!doc.outputs.get("o").unwrap().synctex);
         assert!(!doc.outputs.get("o").unwrap().shell_escape);
     }
 

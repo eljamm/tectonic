@@ -22,6 +22,7 @@ name = <string>  # the output's name
 type = <"pdf">  # the output's type
 tex_format = [string]  # optional, defaults to "latex": the TeX format to use
 shell_escape = [bool]  # optional, defaults to false: whether "shell escape" (\write18) is allowed
+synctex = [bool] # optional, defaults to false: whether to generate SyncTeX data
 preamble = [string] # optional, defaults to "_preamble.tex": the preamble file to use (within `src`)
 index = [string] # optional, defaults to "index.tex": the index file to use (within `src`)
 postamble = [string] # optional, defaults to "_postamble.tex": the postamble file to use (within `src`)
@@ -82,6 +83,12 @@ operating system shell. It also is inherently unportable, because it requires
 that your document compilation is run in an environment where an operating
 system shell exists and can be invoked. Its use is therefore strongly
 discouraged, but some packages require it.
+
+### `output.synctex`
+
+Whether to generate the SyncTeX data. The default is false. This is mostly
+useful for easier navigation in supported IDEs, where LaTeX source code and
+PDF output are synchronized.
 
 ### `output.preamble`
 
