@@ -17,6 +17,7 @@ tectonic -X build
   [--only-cached] [-C]
   [--open]
   [--print] [-p]
+  [--synctex]
   [--target <target>]
   [--untrusted]
 ```
@@ -54,6 +55,10 @@ The `--print` option (or `-p` for short) will cause the engine to print the
 regular terminal output of the TeX engine. This output is similar to, but not
 identical to, the contents of the log file. By default, this output is only
 printed if the engine encounters a fatal error.
+
+The `--synctex` option will generate the SyncTeX data necessary to provide 
+synchronization between LaTeX source code and PDF output. This is mostly
+useful for easier navigation in supported IDEs.
 
 The `--target` option will only build the
 [output](../ref/tectonic-toml.md#output) with the specified name. If this option

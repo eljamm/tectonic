@@ -239,6 +239,10 @@ pub struct BuildCommand {
     #[structopt(long)]
     open: bool,
 
+    /// Generate SyncTeX data
+    #[structopt(long)]
+    synctex: bool,
+
     /// Specify a target to be used by the build
     #[structopt(long, help = "Specify the target of the build.")]
     target: Option<String>,
@@ -278,6 +282,7 @@ impl BuildCommand {
                 .format_cache_path(config.format_cache_path()?)
                 .keep_intermediates(self.keep_intermediates)
                 .keep_logs(self.keep_logs)
+                .synctex(self.synctex)
                 .print_stdout(self.print_stdout);
 
             crate::compile::run_and_report(builder, status)?;
